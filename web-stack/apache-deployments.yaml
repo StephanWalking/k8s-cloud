@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-1-deployment
+  labels:
+    app: apache
+    instance: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache
+      instance: "1"
+  template:
+    metadata:
+      labels:
+        app: apache
+        instance: "1"
+    spec:
+      containers:
+      - name: apache
+        image: httpd:alpine
+        ports:
+        - containerPort: 80
+        command: ["/bin/sh", "-c"]
+        args: ["echo '<h1>Apache Server 1</h1>' > /usr/local/apache2/htdocs/index.html && httpd-foreground"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-2-deployment
+  labels:
+    app: apache
+    instance: "2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache
+      instance: "2"
+  template:
+    metadata:
+      labels:
+        app: apache
+        instance: "2"
+    spec:
+      containers:
+      - name: apache
+        image: httpd:alpine
+        ports:
+        - containerPort: 80
+        command: ["/bin/sh", "-c"]
+        args: ["echo '<h1>Apache Server 2</h1>' > /usr/local/apache2/htdocs/index.html && httpd-foreground"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-service
+spec:
+  type: ClusterIP
+  selector:
+    app: apache
+  ports:
+  - port: 80
+    targetPort: 80

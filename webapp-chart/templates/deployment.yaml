@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  labels:
+    {{- include "webapp.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "webapp.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "webapp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        environment: {{ .Values.environment }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            echo "<h1>{{ .Values.customText | default "It works!" }}</h1>" > /usr/local/apache2/htdocs/index.html && httpd-foreground
+        ports:
+        - containerPort: {{ .Values.service.targetPort }}
+          name: http
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}

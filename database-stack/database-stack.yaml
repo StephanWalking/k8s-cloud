@@ -1,0 +1,140 @@
+# 1. Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database-ns
+
+---
+# 2. PersistentVolume (lokale opslag op worker)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mariadb-pv
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath:
+    path: /mnt/mariadb-data
+
+---
+# 3. PersistentVolumeClaim in database-ns
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-pvc
+  namespace: database-ns
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+# 4. MariaDB Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+  namespace: database-ns
+  labels:
+    app: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb
+        image: mariadb:10.11
+        env:
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-root-password
+        - name: MARIADB_DATABASE
+          value: "cloud_db"
+        - name: MARIADB_USER
+          value: "dbuser"
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-password
+        ports:
+        - containerPort: 3306
+          name: mariadb
+        volumeMounts:
+        - name: mariadb-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mariadb-storage
+        persistentVolumeClaim:
+          claimName: mariadb-pvc
+
+---
+# 5. MariaDB ClusterIP Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  namespace: database-ns
+spec:
+  type: ClusterIP
+  selector:
+    app: mariadb
+  ports:
+  - port: 3306
+    targetPort: 3306
+
+---
+# 6. Adminer Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer-deployment
+  namespace: database-ns
+  labels:
+    app: adminer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+      - name: adminer
+        image: adminer:latest
+        ports:
+        - containerPort: 8080
+
+---
+# 7. Adminer NodePort Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer-service
+  namespace: database-ns
+spec:
+  type: NodePort
+  selector:
+    app: adminer
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30088

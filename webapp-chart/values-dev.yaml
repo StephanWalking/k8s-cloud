@@ -1,0 +1,16 @@
+replicaCount: 1
+environment: dev
+customText: "JoeJoe!"
+service:
+  type: NodePort
+  port: 80
+  targetPort: 80
+  nodePort: 30081
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
