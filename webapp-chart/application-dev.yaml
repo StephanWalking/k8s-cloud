@@ -1,0 +1,208 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd.argoproj.io/hydrate: normal
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"argoproj.io/v1alpha1","kind":"Application","metadata":{"annotations":{},"name":"webapp-dev","namespace":"argocd"},"spec":{"destination":{"namespace":"default","server":"https://kubernetes.default.svc"},"project":"default","source":{"helm":{"valueFiles":["values-dev.yaml"]},"path":"webapp-chart","repoURL":"https://github.com/StephanWalking/k8s-cloud.git","targetRevision":"main"},"syncPolicy":{"automated":{"prune":true,"selfHeal":true},"syncOptions":["CreateNamespace=true"]}}}
+  creationTimestamp: "2026-10-28T14:41:11Z"
+  generation: 654
+  name: webapp-dev
+  namespace: argocd
+  resourceVersion: "898887"
+  uid: 9e9cdaad-b407-4114-aa6b-facaa782554e
+spec:
+  destination:
+    namespace: webapp
+    server: https://kubernetes.default.svc
+  ignoreDifferences:
+  - group: apps
+    jsonPointers:
+    - /spec/replicas
+    kind: Deployment
+    name: webapp-dev-deployment
+  project: default
+  source:
+    helm:
+      valueFiles:
+      - values-dev.yaml
+    path: webapp-chart
+    repoURL: https://github.com/StephanWalking/k8s-cloud.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+status:
+  controllerNamespace: argocd
+  health:
+    lastTransitionTime: "2026-10-29T12:43:39Z"
+    status: Healthy
+  history:
+  - deployStartedAt: "2026-10-28T14:46:41Z"
+    deployedAt: "2026-10-28T14:46:42Z"
+    id: 0
+    initiatedBy:
+      automated: true
+    revision: 8b86f8b3d92bf5dba5751a6626926bb1788cdc6c
+    source:
+      helm:
+        valueFiles:
+        - values-dev.yaml
+      path: webapp-chart
+      repoURL: https://github.com/StephanWalking/k8s-cloud.git
+      targetRevision: main
+  - deployStartedAt: "2026-10-29T11:42:44Z"
+    deployedAt: "2026-10-29T11:42:45Z"
+    id: 1
+    initiatedBy:
+      automated: true
+    revision: 27deb51d11e6e4616eb201d6f1a8a58ff9030247
+    source:
+      helm:
+        valueFiles:
+        - values-dev.yaml
+      path: webapp-chart
+      repoURL: https://github.com/StephanWalking/k8s-cloud.git
+      targetRevision: main
+  - deployStartedAt: "2026-10-29T12:00:43Z"
+    deployedAt: "2026-10-29T12:00:43Z"
+    id: 2
+    initiatedBy:
+      automated: true
+    revision: 7b4cc294a5f9a103ecb572cba4b083b5a7d9c3dc
+    source:
+      helm:
+        valueFiles:
+        - values-dev.yaml
+      path: webapp-chart
+      repoURL: https://github.com/StephanWalking/k8s-cloud.git
+      targetRevision: main
+  - deployStartedAt: "2026-10-29T12:30:01Z"
+    deployedAt: "2026-10-29T12:30:02Z"
+    id: 3
+    initiatedBy:
+      automated: true
+    revision: f3a4707f27369a78c7700d67519d348c191b98e2
+    source:
+      helm:
+        valueFiles:
+        - values-dev.yaml
+      path: webapp-chart
+      repoURL: https://github.com/StephanWalking/k8s-cloud.git
+      targetRevision: main
+  - deployStartedAt: "2026-10-29T12:36:42Z"
+    deployedAt: "2026-10-29T12:36:43Z"
+    id: 4
+    initiatedBy:
+      username: admin
+    revision: f3a4707f27369a78c7700d67519d348c191b98e2
+    source:
+      helm:
+        valueFiles:
+        - values-dev.yaml
+      path: webapp-chart
+      repoURL: https://github.com/StephanWalking/k8s-cloud.git
+      targetRevision: main
+  - deployStartedAt: "2026-10-29T12:41:46Z"
+    deployedAt: "2026-10-29T12:41:47Z"
+    id: 5
+    initiatedBy:
+      username: admin
+    revision: f3a4707f27369a78c7700d67519d348c191b98e2
+    source:
+      helm:
+        valueFiles:
+        - values-dev.yaml
+      path: webapp-chart
+      repoURL: https://github.com/StephanWalking/k8s-cloud.git
+      targetRevision: main
+  operationState:
+    finishedAt: "2026-10-29T12:43:35Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        automated: true
+      retry:
+        limit: 5
+      sync:
+        autoHealAttemptsCount: 5
+        prune: true
+        resources:
+        - group: apps
+          kind: Deployment
+          name: webapp-dev-deployment
+        revision: f3a4707f27369a78c7700d67519d348c191b98e2
+        source:
+          helm:
+            valueFiles:
+            - values-dev.yaml
+          path: webapp-chart
+          repoURL: https://github.com/StephanWalking/k8s-cloud.git
+          targetRevision: main
+        syncOptions:
+        - CreateNamespace=true
+    phase: Succeeded
+    startedAt: "2026-10-29T12:43:35Z"
+    syncResult:
+      resources:
+      - group: apps
+        hookPhase: Running
+        images:
+        - httpd:2.4
+        kind: Deployment
+        message: deployment.apps/webapp-dev-deployment configured
+        name: webapp-dev-deployment
+        namespace: webapp
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: f3a4707f27369a78c7700d67519d348c191b98e2
+      source:
+        helm:
+          valueFiles:
+          - values-dev.yaml
+        path: webapp-chart
+        repoURL: https://github.com/StephanWalking/k8s-cloud.git
+        targetRevision: main
+  reconciledAt: "2026-10-29T12:51:33Z"
+  resourceHealthSource: appTree
+  resources:
+  - kind: Service
+    name: webapp-dev-service
+    namespace: webapp
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: webapp-dev-deployment
+    namespace: webapp
+    status: Synced
+    version: v1
+  sourceHydrator: {}
+  sourceType: Helm
+  summary:
+    images:
+    - httpd:2.4
+  sync:
+    comparedTo:
+      destination:
+        namespace: webapp
+        server: https://kubernetes.default.svc
+      ignoreDifferences:
+      - group: apps
+        jsonPointers:
+        - /spec/replicas
+        kind: Deployment
+        name: webapp-dev-deployment
+      source:
+        helm:
+          valueFiles:
+          - values-dev.yaml
+        path: webapp-chart
+        repoURL: https://github.com/StephanWalking/k8s-cloud.git
+        targetRevision: main
+    revision: f3a4707f27369a78c7700d67519d348c191b98e2
+    status: Synced
