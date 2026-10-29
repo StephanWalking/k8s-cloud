@@ -1,0 +1,26 @@
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    retention: 7d
+
+  service:
+    type: NodePort
+    nodePort: 30101
+
+grafana:
+  enabled: true
+  service:
+    type: NodePort
+    nodePort: 30100
+
+alertmanager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false
