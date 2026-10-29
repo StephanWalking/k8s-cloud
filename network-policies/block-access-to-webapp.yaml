@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: block-access-to-webapp
+  namespace: database-ns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+  - to:
+    - namespaceSelector:
+        matchExpressions:
+        - key: ns
+          operator: NotIn
+          values:
+          - webapp
+    - podSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/instance
+          operator: NotIn
+          values:
+          - webapp-dev
