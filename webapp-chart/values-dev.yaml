@@ -1,6 +1,6 @@
 replicaCount: 1
 environment: dev
-customText: "JoeJoe!"
+customText: "Kebaaaaaaab!"
 service:
   type: NodePort
   port: 80
