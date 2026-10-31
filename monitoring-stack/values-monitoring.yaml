@@ -2,6 +2,8 @@ prometheus:
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
     retention: 7d
+    secrets:
+      - kube-etcd-client-certs
 
   service:
     type: NodePort
@@ -17,10 +19,32 @@ alertmanager:
   enabled: false
 
 kubeScheduler:
-  enabled: false
+  enabled: true
+  endpoints:
+    - 10.24.12.160
+
 kubeControllerManager:
-  enabled: false
-kubeEtcd:
-  enabled: false
+  enabled: true
+  endpoints:
+    - 10.24.12.160
+
 kubeProxy:
-  enabled: false
+  enabled: true
+  endpoints:
+    - 10.24.12.160
+
+kubeEtcd:
+  enabled: true
+  endpoints:
+    - 10.24.12.160
+  service:
+    enabled: true
+    port: 2379
+    targetPort: 2379
+  serviceMonitor:
+    scheme: https
+    insecureSkipVerify: false
+    serverName: localhost
+    caFile: /etc/prometheus/secrets/kube-etcd-client-certs/etcd-ca
+    certFile: /etc/prometheus/secrets/kube-etcd-client-certs/etcd-client
+    keyFile: /etc/prometheus/secrets/kube-etcd-client-certs/etcd-client-key
